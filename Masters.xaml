@@ -1,0 +1,131 @@
+﻿<Window x:Class="SaloonKrasotka.Masters"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStartupLocation="CenterScreen"
+        Title="Мастера" Height="541" Width="900">
+    <Grid Background="#FFD9E4B6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Панель кнопок с логическим разделением -->
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Группа 1: Действия с данными -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock Text="Действия:" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,10,0"/>
+                <Button x:Name="b_masterShowInactive" Content="👁️ Показать неактивных" Click="b_masterShowInactive_Click" 
+                       Margin="5,0" Padding="12,5" ToolTip="Переключить отображение активных/неактивных мастеров"
+                       Background="#FFE3F2FD" BorderBrush="#FF1976D2"/>
+                <Button x:Name="b_masterNew" Content="➕ Новый мастер" Click="b_masterNew_Click" 
+                       Margin="5,0" Padding="12,5" ToolTip="Добавить нового мастера"
+                       Background="#FFE8F5E8" BorderBrush="#FF2E7D32"/>
+                <Button x:Name="b_masterDelete" Content="🗑️ Удалить" Click="b_masterDelete_Click" 
+                       Margin="5,0" Padding="12,5" ToolTip="Деактивировать выбранного мастера"
+                       Background="#FFFCE4EC" BorderBrush="#FFC2185B"/>
+                <Button x:Name="b_masterReturn" Content="← Вернуться" Click="b_masterReturn_Click" 
+                       Margin="5,0" Padding="15,5" ToolTip="Вернуться в главное меню"
+                       Background="#FFF5F5F5" BorderBrush="#FF757575" FontWeight="SemiBold"/>
+            </StackPanel>
+
+            <!-- Группа 2: Фильтры и поиск -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <!-- Поиск будет здесь -->
+            </StackPanel>
+
+            <!-- Группа 3: Навигация -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <!-- Навигационные кнопки теперь в основной группе -->
+            </StackPanel>
+        </Grid>
+
+        <!-- Поиск мастеров -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="10,5,10,5" VerticalAlignment="Center">
+            <TextBlock Text="🔍 Поиск мастеров:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+            <TextBox x:Name="searchTextBox" Width="300" Height="28" Padding="5" TextChanged="searchTextBox_TextChanged"
+                     VerticalContentAlignment="Center" ToolTip="Поиск по имени, телефону или типу услуги"/>
+        </StackPanel>
+
+        <!-- Таблица мастеров -->
+        <DataGrid x:Name="mastersCell" Grid.Row="2" Grid.Column="0" Margin="10" AutoGenerateColumns="False" 
+                  IsReadOnly="True" SelectionMode="Single" SelectionChanged="masterCell_SelectionChanged"
+                  MouseDoubleClick="mastersCell_MouseDoubleClick" HeadersVisibility="Column"
+                  Background="White" BorderBrush="LightGray">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код" Binding="{Binding MasterCode}" Width="60"/>
+                <DataGridTextColumn Header="Имя мастера" Binding="{Binding MasterName}" Width="*"/>
+                <DataGridTextColumn Header="Телефон" Binding="{Binding MasterTel}" Width="120"/>
+                <DataGridTextColumn Header="Специализация" Binding="{Binding ServiceTypeName}" Width="150"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding MastersActivity}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Карточка мастера -->
+        <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="10" BorderBrush="Gray" BorderThickness="1" 
+                Background="White" CornerRadius="5">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="15">
+                    <TextBlock Text="Информация о мастере" FontSize="16" FontWeight="Bold" 
+                              HorizontalAlignment="Center" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Код мастера:" FontWeight="Bold" Margin="0,5,0,2"/>
+                    <TextBlock x:Name="cardMasterCode" Text="" Margin="0,0,0,10" TextWrapping="Wrap"/>
+
+                    <TextBlock Text="Имя мастера:" FontWeight="Bold" Margin="0,5,0,2"/>
+                    <TextBox x:Name="cardMasterName" Text="" Margin="0,0,0,10" IsReadOnly="True"
+                            Background="#FFF5F5F5" BorderThickness="1" Padding="5" TextWrapping="Wrap" MinHeight="25"/>
+
+                    <TextBlock Text="Телефон:" FontWeight="Bold" Margin="0,5,0,2"/>
+                    <TextBox x:Name="cardMasterTel" Text="" Margin="0,0,0,10" IsReadOnly="True"
+                            Background="#FFF5F5F5" BorderThickness="1" Padding="5" TextWrapping="Wrap" MinHeight="25"/>
+
+                    <TextBlock Text="Специализация:" FontWeight="Bold" Margin="0,5,0,2"/>
+                    <ComboBox x:Name="cardMasterServiceType" Margin="0,0,0,15" IsEnabled="False" 
+                             Background="#FFF5F5F5" MinHeight="28">
+                        <!-- Элементы будут заполнены из базы данных -->
+                    </ComboBox>
+
+                    <TextBlock Text="Статус:" FontWeight="Bold" Margin="0,5,0,2"/>
+                    <ComboBox x:Name="cardMasterActivity" Margin="0,0,0,15" IsEnabled="False" 
+                             Background="#FFF5F5F5" MinHeight="28">
+                        <ComboBoxItem Content="да"/>
+                        <ComboBoxItem Content="нет"/>
+                    </ComboBox>
+
+                    <!-- Кнопки управления карточкой - компактный вариант -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <Button x:Name="b_cardChange" Content="✏️ Изменить" Click="b_cardChange_Click" 
+                               Padding="12,6" Margin="5,0" MinWidth="75"
+                               Background="#FFE3F2FD" BorderBrush="#FF1976D2"/>
+                        <Button x:Name="b_cardCancel" Content="❌ Отменить" Click="b_cardCancel_Click" 
+                               Padding="12,6" Margin="5,0" MinWidth="75" Visibility="Collapsed"
+                               Background="#FFFCE4EC" BorderBrush="#FFC2185B"/>
+                        <Button x:Name="b_cardSave" Content="💾 Сохранить" Click="b_cardSave_Click" 
+                               Padding="12,6" Margin="5,0" MinWidth="75" Visibility="Collapsed"
+                               Background="#FFE8F5E8" BorderBrush="#FF2E7D32"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Строка статуса -->
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="2" Background="#FFF5F5F5">
+            <StatusBarItem>
+                <TextBlock x:Name="mastersCountText" Text="👥 Количество мастеров: 0" FontWeight="SemiBold"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

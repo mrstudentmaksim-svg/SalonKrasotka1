@@ -1,0 +1,262 @@
+﻿<Window x:Class="SaloonKrasotka.EveryDay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SaloonKrasotka"
+        mc:Ignorable="d"
+        Title="Салон Красоты - Панель управления" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#FFD9E4B6">
+
+    <Window.Resources>
+        <local:TimeConverte x:Key="TimeConverter"/>
+
+        <!-- Стиль для DataGrid -->
+        <Style x:Key="CustomDataGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="RowBackground" Value="#FAFAFA"/>
+            <Setter Property="AlternatingRowBackground" Value="#F5F5F5"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E0E0E0"/>
+            <Setter Property="VerticalGridLinesBrush" Value="#E0E0E0"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+        </Style>
+
+        <!-- Стиль для заголовков столбцов DataGrid -->
+        <Style x:Key="CustomDataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#FFD9E4B6"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Фон с новым цветом -->
+        <Grid.Background>
+            <SolidColorBrush Color="#FFD9E4B6"/>
+        </Grid.Background>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel>
+
+                <!-- Заголовок -->
+                <Border Background="#FFD9E4B6" Padding="20" Margin="0,0,0,20" BorderBrush="#CCCCCC" BorderThickness="0,0,0,2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="💅 Салон Красоты - Панель управления" 
+                                   FontSize="24" FontWeight="Bold" Foreground="#333333"
+                                   VerticalAlignment="Center"/>
+                        <Button x:Name="btnRefreshData" Content="Главное окно" 
+                                Click="BtnRefreshData_Click" 
+                                Width="120" Height="35" Background="#FFA0C16B" Foreground="#333333"
+                                FontWeight="Bold" Grid.Column="1"
+                                BorderThickness="1" BorderBrush="#CCCCCC"/>
+                    </Grid>
+                </Border>
+
+                <!-- Раздел записи на прием -->
+                <Border Background="White" Padding="15" Margin="0,0,0,20"
+                        BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="3">
+                    <StackPanel>
+                        <TextBlock Text="📅 Записи на прием" FontSize="18" FontWeight="Bold" 
+                                   Foreground="#333333" Margin="0,0,0,15"/>
+
+                        <!-- Кнопка создания записи -->
+                        <Button x:Name="btnCreateAppointment" Content="➕ Создать запись" 
+                                Click="BtnCreateAppointment_Click" 
+                                Width="150" Height="40" Background="#FFA0C16B" Foreground="#333333"
+                                FontWeight="Bold" FontSize="14"
+                                BorderThickness="1" BorderBrush="#CCCCCC"
+                                HorizontalAlignment="Left"/>
+
+                        <!-- Таблица записей с кнопками управления -->
+                        <StackPanel Margin="0,20,0,0">
+                            <TextBlock Text="Список записей:" FontWeight="SemiBold" FontSize="14" 
+                                       Margin="0,0,0,10" Foreground="#616161"/>
+
+                            <DataGrid x:Name="dgAppointments" Style="{StaticResource CustomDataGridStyle}"
+                                      Height="250" SelectionChanged="DgAppointments_SelectionChanged"
+                                      IsReadOnly="True" ColumnHeaderStyle="{StaticResource CustomDataGridColumnHeaderStyle}"
+                                      HorizontalScrollBarVisibility="Disabled">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Код" Binding="{Binding appCode}" Width="60" SortDirection="Ascending"/>
+                                    <DataGridTextColumn Header="Мастер" Binding="{Binding masterName}" Width="150"/>
+                                    <DataGridTextColumn Header="Клиент" Binding="{Binding clientName}" Width="150"/>
+                                    <DataGridTextColumn Header="Тип услуги" Binding="{Binding servTypeName}" Width="120"/>
+                                    <DataGridTextColumn Header="Услуга" Binding="{Binding servName}" Width="150"/>
+                                    <DataGridTextColumn Header="Время начала" Binding="{Binding queueFrom, Converter={StaticResource TimeConverter}}" Width="110"/>
+                                    <DataGridTextColumn Header="Время окончания" Binding="{Binding queueTo, Converter={StaticResource TimeConverter}}" Width="125"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding DateFormatted}" Width="100"/>
+                                    <DataGridTemplateColumn Header="Действия" Width="120">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Content="✏️" Click="BtnEditAppointment_Click" 
+                                                            Background="#FFA0C16B" Foreground="#333333" 
+                                                            Width="30" Height="25" Margin="2,0"
+                                                            BorderThickness="1" BorderBrush="#CCCCCC"
+                                                            ToolTip="Изменить запись"/>
+                                                    <Button Content="🗑️" Click="BtnDeleteAppointment_Click" 
+                                                            Background="#FFE57373" Foreground="#333333" 
+                                                            Width="30" Height="25" Margin="2,0"
+                                                            BorderThickness="1" BorderBrush="#CCCCCC"
+                                                            ToolTip="Деактивировать запись"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Раздел Мастера -->
+                <Border Background="White" Padding="15" Margin="0,0,0,20"
+                        BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="3">
+                    <StackPanel>
+                        <TextBlock Text="👨‍💼 Мастера" FontSize="18" FontWeight="Bold" 
+                                   Foreground="#333333" Margin="0,0,0,15"/>
+
+                        <!-- Выбор мастера -->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Выберите мастера:" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="#616161"/>
+                            <ComboBox x:Name="cmbMasterClients" DisplayMemberPath="MasterName" 
+                                      SelectionChanged="CmbMasterClients_SelectionChanged" 
+                                      Height="35" FontSize="14"
+                                      Background="White" BorderBrush="#BDBDBD"/>
+                        </StackPanel>
+
+                        <!-- Активные клиенты мастера -->
+                        <StackPanel>
+                            <TextBlock Text="Активные клиенты мастера:" FontWeight="SemiBold" FontSize="14" 
+                                       Margin="0,0,0,10" Foreground="#616161"/>
+                            <DataGrid x:Name="dgMasterClients" Style="{StaticResource CustomDataGridStyle}"
+                                      Height="150" ColumnHeaderStyle="{StaticResource CustomDataGridColumnHeaderStyle}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*"/>
+                                    <DataGridTextColumn Header="Телефон" Binding="{Binding ClientTel}" Width="150"/>
+                                    <DataGridTextColumn Header="Услуга" Binding="{Binding ServiceTypeName}" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Раздел Клиенты -->
+                <Border Background="White" Padding="15" Margin="0,0,0,20"
+                        BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="3">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="👥 Клиенты" FontSize="18" FontWeight="Bold" 
+                                       Foreground="#333333" VerticalAlignment="Center"/>
+
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                                <!-- Поиск -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,15,0">
+                                    <TextBlock Text="🔍" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                    <TextBox x:Name="txtClientSearch" Width="200" Height="30" 
+                                             Padding="5" FontSize="14"
+                                             Background="White" BorderBrush="#BDBDBD"
+                                             TextChanged="TxtClientSearch_TextChanged"
+                                             ToolTip="Поиск по имени клиента"/>
+                                </StackPanel>
+
+                                <!-- Кнопка добавления -->
+                                <Button x:Name="btnAddClient" Content="➕ Добавить" 
+                                        Click="BtnAddClient_Click" 
+                                        Width="120" Height="35" Background="#FFA0C16B" Foreground="#333333"
+                                        FontWeight="Bold" FontSize="14"
+                                        BorderThickness="1" BorderBrush="#CCCCCC"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Таблица клиентов -->
+                        <DataGrid x:Name="dgClients" Style="{StaticResource CustomDataGridStyle}"
+                                  Height="200" ColumnHeaderStyle="{StaticResource CustomDataGridColumnHeaderStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Имя" Binding="{Binding ClientName}" Width="*"/>
+                                <DataGridTextColumn Header="Телефон" Binding="{Binding ClientTel}" Width="150"/>
+                                <DataGridTemplateColumn Header="Действия" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <Button Content="✏️" Click="BtnEditClient_Click" 
+                                                        Background="#FFA0C16B" Foreground="#333333" 
+                                                        Width="30" Height="25" Margin="2,0"
+                                                        BorderThickness="1" BorderBrush="#CCCCCC"
+                                                        ToolTip="Изменить клиента"/>
+                                                <Button Content="🗑️" Click="BtnDeleteClient_Click" 
+                                                        Background="#FFE57373" Foreground="#333333" 
+                                                        Width="30" Height="25" Margin="2,0"
+                                                        BorderThickness="1" BorderBrush="#CCCCCC"
+                                                        ToolTip="Деактивировать клиента"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Раздел Услуги -->
+                <Border Background="White" Padding="15"
+                        BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="3">
+                    <StackPanel>
+                        <TextBlock Text="💆 Услуги" FontSize="18" FontWeight="Bold" 
+                                   Foreground="#333333" Margin="0,0,0,15"/>
+
+                        <!-- Выбор типа услуги -->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Выберите тип услуги:" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="#616161"/>
+                            <ComboBox x:Name="cmbServiceTypes" DisplayMemberPath="servType" 
+                                      SelectionChanged="CmbServiceTypes_SelectionChanged" 
+                                      Height="35" FontSize="14"
+                                      Background="White" BorderBrush="#BDBDBD"/>
+                        </StackPanel>
+
+                        <!-- Таблица услуг -->
+                        <StackPanel>
+                            <TextBlock Text="Услуги по выбранному типу:" FontWeight="SemiBold" FontSize="14" 
+                                       Margin="0,0,0,10" Foreground="#616161"/>
+                            <DataGrid x:Name="dgServices" Style="{StaticResource CustomDataGridStyle}"
+                                      Height="250" ColumnHeaderStyle="{StaticResource CustomDataGridColumnHeaderStyle}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Услуга" Binding="{Binding servName}" Width="*"/>
+                                    <DataGridTextColumn Header="Стоимость" Binding="{Binding servPrice, StringFormat=\{0\} руб.}" Width="120"/>
+                                    <DataGridTextColumn Header="Длительность" Binding="{Binding DurationFormatted}" Width="120"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
